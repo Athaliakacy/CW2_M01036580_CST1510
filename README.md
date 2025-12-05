@@ -1,5 +1,4 @@
 # CW2_M01036580_CST1510
-# CW2_M01036580_CST1510
 # Week 7: Secure Authentication System
 Student Name: [Athalia]
 Student ID: [M01036580]
