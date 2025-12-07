@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Initialise session state
+# Initialising session state
 if "users" not in st.session_state:
     st.session_state.users = {}  # simple in-memory dictionary
 
