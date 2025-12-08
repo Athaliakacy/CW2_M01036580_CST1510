@@ -70,30 +70,65 @@ In Week 9, we focused on building the **core platform** using Streamlit, integra
 
 ---
 
-## Week 10 – Enhancements and Domain Intelligence
+## Week 10 – AI-Powered Multi-Domain Assistants
 
-In Week 10, the platform was extended with **advanced domain intelligence features**, including AI integration, enhanced visualizations, and real-time analytics.
+In Week 10, the platform was extended to integrate **AI-powered assistants** using the Gemini API, with both console-based and Streamlit interfaces. The focus was on building interactive chat assistants for Cybersecurity, Data Science, and IT Operations, integrated with the existing multi-domain platform.
 
-### Key Enhancements
+---
 
-1. **AI-Powered Domain Assistance**
-   - Integrated language models for domain-specific recommendations.
-   - Chat interface for Cybersecurity, Data Science, and IT Operations.
+### Part 1: Text-Based Gemini Ai (Python)
 
-2. **Enhanced Visualizations**
-   - Interactive charts with filters and domain-specific metrics.
-   - Real-time data insights using `st.line_chart()` and `st.bar_chart()`.
+- **Gemini API Setup**
+  - Obtain Gemini API key and purchase minimum credits ($5).  
+  - Install the Gemini library:  
+    ```bash
+    pip install google-generativeai
+    ```
+  - Create the first API call to test connectivity.
 
-3. **Advanced CRUD Operations**
-   - Connected forms to database tables.
-   - Added record validation, error handling, and dynamic updates.
+- **Interactive Console Chat**
+  - Implement a console-based chat with **conversation history**.  
+  - Maintain previous messages for context.  
 
-4. **Role-Based Dashboards**
-   - Admin users can manage all domain data.
-   - Standard users access only their own records and analytics.
+- **Secure API Key Storage**
+  - Store the API key securely using an **`.env` file**.  
+  - Load API keys using Python’s `dotenv` library to avoid exposing credentials.
 
-5. **Session Persistence & State Management**
-   - User interactions, chat history, and data selections maintained across reruns.
-   - Improved multi-page navigation with consistent session state.
+---
+
+### Part 2: Streamlit Integration
+
+- **Secrets Management**
+  - Configure API key in `streamlit/secrets.toml` for secure access.  
+
+- **Chat Interface**
+  - Build interactive chat using:
+    - `st.chat_message()` – display user and assistant messages.  
+    - `st.chat_input()` – input field for user messages.  
+  - Implement **streaming responses** with `stream=True` for real-time feedback.  
+
+- **Sidebar Controls**
+  - Add **Clear Chat** button to reset conversation.  
+  - Display **message counter** to track conversation length.
+
+---
+
+### Part 3: Domain-Specific Assistants
+
+- **Specialized System Prompts**
+  - Create tailored prompts for:
+    - **Cybersecurity** – analyze threats and incidents.  
+    - **Data Science** – provide analytics, statistics, and visualization guidance.  
+    - **IT Operations** – troubleshoot infrastructure and manage tickets.
+
+- **Integration with Database**
+  - Connect AI assistants with Week 8 database:
+    - Analyze incidents, IT tickets, and datasets.  
+    - Provide AI-guided recommendations based on stored data.
+
+- **Multi-Page Streamlit App**
+  - Add separate assistant pages for each domain.  
+  - Maintain session state and conversation history per domain.  
+  - Seamless navigation between dashboards and AI assistants.
 
 ---
