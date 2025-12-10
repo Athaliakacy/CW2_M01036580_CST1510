@@ -1,38 +1,37 @@
 import streamlit as st
-import os
-api_key = os.getenv("GEMINI_API_KEY")
+import google.generativeai as genai
 
+# --- Streamlit Page Settings ---
+st.set_page_config(page_title="Multi-Domain AI (Gemini)", page_icon=":)", layout="wide")
+st.title("Multi-Domain AI Assistant — Powered by Gemini")
+st.caption("Choose your domain: Cybersecurity, Data Science, or IT Operations")
 
-# --- Debug message to ensure app loads ---
-st.write(" App Loaded Successfully")
-
-# --- Check Gemini API Key ---
+# --- Check GEMINI_API_KEY ---
 try:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 except KeyError:
-    st.error(" GEMINI_API_KEY is missing! Add it to Streamlit secrets.toml.")
-    st.stop()  # Stop execution if key is missing
-
-# --- Import Gemini safely ---
-try:
-    import google.generativeai as genai
-except Exception as e:
-    st.error(f" Failed to import Gemini SDK: {e}")
+    st.error("GEMINI_API_KEY is missing! Add it to Streamlit secrets.toml.")
     st.stop()
 
 # --- Configure Gemini ---
+genai.configure(api_key=gemini_api_key)
+
+# --- Fetch available models safely ---
 try:
-    genai.configure(api_key=gemini_api_key)
-    st.write(" Gemini API configured")
+    available_models = genai.list_models()
+    # Only include models that support text generation
+    model_names = [
+        m.name
+        for m in available_models
+        if "generateContent" in getattr(m, "supported_generation_methods", [])
+    ]
 except Exception as e:
-    st.error(f" Failed to configure Gemini: {e}")
+    st.error(f"Failed to fetch available models: {e}")
     st.stop()
 
-# --- Gemini Model Options ---
-MODEL_OPTIONS = {
-    "Gemini 1.5 Flash": "gemini-1.5-flash",
-    "Gemini 1.5 Pro": "gemini-1.5-pro"
-}
+if not model_names:
+    st.error("No valid Gemini models available for text generation.")
+    st.stop()
 
 # --- Domain Prompts ---
 DOMAIN_PROMPTS = {
@@ -44,11 +43,6 @@ Help with machine learning, statistics, data cleaning, and visualization.""",
 Troubleshoot infrastructure issues, optimize systems, and manage tickets."""
 }
 
-# --- Streamlit Page Settings ---
-st.set_page_config(page_title="Multi-Domain AI (Gemini)", page_icon=":)", layout="wide")
-st.title("Multi-Domain AI Assistant — Powered by Gemini")
-st.caption("Choose your domain: Cybersecurity, Data Science, or IT Operations")
-
 # --- Session State for Chat ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -56,23 +50,18 @@ if "messages" not in st.session_state:
 # --- Sidebar Controls ---
 with st.sidebar:
     st.subheader("Chat Settings")
-
-    domain = st.selectbox("Choose Domain", ["Cybersecurity", "Data Science", "IT Operations"])
-
-    model_choice = st.selectbox("Gemini Model", list(MODEL_OPTIONS.keys()), index=0)
-    model_name = MODEL_OPTIONS[model_choice]
-
+    domain = st.selectbox("Choose Domain", list(DOMAIN_PROMPTS.keys()))
+    model_name = st.selectbox("Gemini Model", model_names, index=0)
     temperature = st.slider("Temperature", 0.0, 2.0, 1.0, 0.1)
-
     if st.button("Reset Chat"):
         st.session_state.messages = []
         st.experimental_rerun()
 
-# --- Load Gemini Model ---
+# --- Load Selected Gemini Model ---
 try:
     model = genai.GenerativeModel(model_name)
 except Exception as e:
-    st.error(f" Failed to load Gemini model '{model_name}': {e}")
+    st.error(f"Failed to load Gemini model '{model_name}': {e}")
     st.stop()
 
 # --- Display Conversation ---
@@ -87,7 +76,6 @@ if prompt:
     # Show user message
     with st.chat_message("user"):
         st.markdown(prompt)
-
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # Build Gemini Input
@@ -110,7 +98,7 @@ USER:
                 )
                 reply = response.text
             except Exception as e:
-                reply = f" Error generating response: {e}"
+                reply = f"Error generating response: {e}"
 
         st.markdown(reply)
         st.session_state.messages.append({"role": "assistant", "content": reply})
