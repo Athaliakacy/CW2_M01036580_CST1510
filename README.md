@@ -126,9 +126,4 @@ In Week 10, the platform was extended to integrate **AI-powered assistants** usi
     - Analyze incidents, IT tickets, and datasets.  
     - Provide AI-guided recommendations based on stored data.
 
-- **Multi-Page Streamlit App**
-  - Add separate assistant pages for each domain.  
-  - Maintain session state and conversation history per domain.  
-  - Seamless navigation between dashboards and AI assistants.
 
----
