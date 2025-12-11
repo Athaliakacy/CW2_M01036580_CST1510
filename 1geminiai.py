@@ -1,22 +1,21 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- Streamlit Page Settings ---
+# Streamlit Page Settings
 st.set_page_config(page_title="Multi-Domain AI (Gemini)", page_icon=":)", layout="wide")
 st.title("Multi-Domain AI Assistant — Powered by Gemini")
 st.caption("Choose your domain: Cybersecurity, Data Science, or IT Operations")
 
-# --- Check GEMINI_API_KEY ---
+#Check GEMINI_API_KEY
 try:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 except KeyError:
     st.error("GEMINI_API_KEY is missing! Add it to Streamlit secrets.toml.")
     st.stop()
 
-# --- Configure Gemini ---
 genai.configure(api_key=gemini_api_key)
 
-# --- Fetch available models safely ---
+# Fetch available models safely
 try:
     available_models = genai.list_models()
     # Only include models that support text generation
@@ -33,7 +32,7 @@ if not model_names:
     st.error("No valid Gemini models available for text generation.")
     st.stop()
 
-# --- Domain Prompts ---
+
 DOMAIN_PROMPTS = {
     "Cybersecurity": """You are a cybersecurity expert assistant.
 Analyze threats, logs, vulnerabilities, and provide technical cyber guidance.""",
@@ -43,11 +42,9 @@ Help with machine learning, statistics, data cleaning, and visualization.""",
 Troubleshoot infrastructure issues, optimize systems, and manage tickets."""
 }
 
-# --- Session State for Chat ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- Sidebar Controls ---
 with st.sidebar:
     st.subheader("Chat Settings")
     domain = st.selectbox("Choose Domain", list(DOMAIN_PROMPTS.keys()))
@@ -57,19 +54,19 @@ with st.sidebar:
         st.session_state.messages = []
         st.experimental_rerun()
 
-# --- Load Selected Gemini Model ---
+#Load Selected Gemini Model
 try:
     model = genai.GenerativeModel(model_name)
 except Exception as e:
     st.error(f"Failed to load Gemini model '{model_name}': {e}")
     st.stop()
 
-# --- Display Conversation ---
+#Display Conversation
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# --- Chat Input ---
+#  Chat Input 
 prompt = st.chat_input("Type your message...")
 
 if prompt:
@@ -102,3 +99,4 @@ USER:
 
         st.markdown(reply)
         st.session_state.messages.append({"role": "assistant", "content": reply})
+
