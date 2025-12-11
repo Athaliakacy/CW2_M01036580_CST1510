@@ -4,25 +4,19 @@ import numpy as np
 import google.generativeai as genai
 
 
-# -----------------------------------
-# PAGE SETTINGS
-# -----------------------------------
+#  PAGE SETTINGS
 st.set_page_config(page_title="Cybersecurity Dashboard + AI", layout="wide")
 st.title("Cybersecurity Dashboard + Gemini AI Assistant")
 st.caption("Monitor incidents and chat with an AI cybersecurity expert.")
 
 
-# -----------------------------------
 # AUTH CHECK
-# -----------------------------------
 if "logged_in" not in st.session_state or not st.session_state.logged_in:
     st.error("You must be logged in to access this dashboard.")
     st.stop()
 
 
-# -----------------------------------
 # CHECK GEMINI API KEY
-# -----------------------------------
 try:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 except KeyError:
@@ -32,9 +26,7 @@ except KeyError:
 genai.configure(api_key=gemini_api_key)
 
 
-# -----------------------------------
 # FETCH GEMINI MODELS
-# -----------------------------------
 try:
     available_models = genai.list_models()
     model_names = [
@@ -50,9 +42,7 @@ if not model_names:
     st.stop()
 
 
-# -----------------------------------
 # CYBERSECURITY SYSTEM PROMPT
-# -----------------------------------
 CYBER_PROMPT = """
 You are a professional Cybersecurity Analyst AI.
 Your job is to analyze logs, detect threats, provide incident insights,
@@ -60,9 +50,7 @@ improve SOC workflows, and generate security recommendations.
 """
 
 
-# -----------------------------------
 # SIDEBAR SETTINGS
-# -----------------------------------
 with st.sidebar:
     st.header("Settings")
 
@@ -76,9 +64,7 @@ with st.sidebar:
         st.experimental_rerun()
 
 
-# -----------------------------------
 # LOAD MODEL
-# -----------------------------------
 try:
     model = genai.GenerativeModel(model_name)
 except Exception as e:
@@ -86,16 +72,11 @@ except Exception as e:
     st.stop()
 
 
-# -----------------------------------
-# LOAD REAL INCIDENT DATA (NO UPLOAD)
-# -----------------------------------
+# LOAD REAL INCIDENT DATA
 df = pd.read_csv("data/cyber_incidents.csv", sep="\t")  
 st.write("Columns in CSV:", df.columns.tolist())  
 
 
-# -----------------------------------
-# MAP REAL DATA INTO SIMPLIFIED INCIDENT TABLE (for charts)
-# -----------------------------------
 incidents = pd.DataFrame({
     "day": range(len(df)),
     "phishing": (df["category"] == "Phishing").astype(int),
@@ -104,9 +85,7 @@ incidents = pd.DataFrame({
 })
 
 
-# -----------------------------------
 # DASHBOARD LAYOUT
-# -----------------------------------
 col1, col2 = st.columns(2)
 
 with col1:
@@ -130,9 +109,7 @@ st.info(
 
 
 
-# -----------------------------------
 # GEMINI AI CHAT SECTION
-# -----------------------------------
 st.markdown("---")
 st.header(" Cybersecurity AI Assistant")
 
