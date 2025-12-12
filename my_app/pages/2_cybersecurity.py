@@ -73,7 +73,7 @@ except Exception as e:
 
 
 # LOAD REAL INCIDENT DATA
-df = pd.read_csv("Data/cyber_incidents.csv", sep="\t")  
+df = pd.read_csv("DATA/cyber_incidents.csv", sep="\t")  
 st.write("Columns in CSV:", df.columns.tolist())  
 
 
@@ -165,4 +165,5 @@ USER QUESTION:
 
         st.markdown(reply)
         st.session_state.messages.append({"role": "assistant", "content": reply})
+
 
